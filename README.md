@@ -84,17 +84,27 @@ You can modify or expand this dataset according to your specific requirements.
 
 # Demo:
 
-<img src="img/1.png" alt="workflow" width="100%">
-**DUser Interface(Dark mode)**
+<figure>
+  <img src="img/1.png" alt="workflow" width="100%">
+  <figcaption>User Interface(Dark Mode)</figcaption>
+</figure>
 
-<img src="img/2.png" alt="workflow" width="100%">
-**User Interface(Light mode)**
+<figure>
+  <img src="img/2.png" alt="workflow" width="100%">
+  <figcaption>User Interface(Light Mode)</figcaption>
+</figure>
 
-<img src="img/3.png" alt="workflow" width="100%">
-**Processed Video**
+<figure>
+  <img src="img/3.png" alt="workflow" width="100%">
+  <figcaption>Processed Video</figcaption>
+</figure>
 
-<img src="img/4.png" alt="workflow" width="100%">
-**Analysis Report**
+<figure>
+  <img src="img/4.png" alt="workflow" width="100%">
+  <figcaption>Analysis Report</figcaption>
+</figure>
 
-<img src="img/5.png" alt="workflow" width="100%">
-**Model Details**
+<figure>
+  <img src="img/5.png" alt="workflow" width="100%">
+  <figcaption>Model Details</figcaption>
+</figure>
