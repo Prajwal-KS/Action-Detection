@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import axios from 'axios';
 import { Play, Download, AlertCircle, FileDown } from 'lucide-react';
 import FileUpload from '../components/FileUpload';
+import { useProcess } from '../context/ProcessContext';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -15,34 +16,24 @@ const api = axios.create({
   },
 });
 
-interface AnalysisReport {
-  total_frames: number;
-  processed_frames: number;
-  detection_type: string;
-  total_detections: number;
-  average_detections_per_frame: number;
-  video_duration: string;
-  resolution: string;
-  fps: number;
-  processing_time: string;
-  detection_confidence: number;
-  detected_classes: { [key: string]: number };
-  elapsedTime: string;
-  performance_metrics: {
-    cpu_usage: number;
-    memory_usage: number;
-    processing_speed: number;
-  };
-}
-
 const ProcessPage = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [detectionType, setDetectionType] = useState<'action' | 'proximity'>('action');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [processedVideo, setProcessedVideo] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [analysisReport, setAnalysisReport] = useState<AnalysisReport | null>(null);
+  const {
+    file,
+    setFile,
+    detectionType,
+    setDetectionType,
+    uploadProgress,
+    setUploadProgress,
+    processedVideo,
+    setProcessedVideo,
+    isProcessing,
+    setIsProcessing,
+    error,
+    setError,
+    analysisReport,
+    setAnalysisReport,
+  } = useProcess();
+  
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleFileSelect = (selectedFile: File) => {
@@ -177,7 +168,8 @@ const ProcessPage = () => {
     const performanceMetrics = [
       ['CPU Usage', `${analysisReport.performance_metrics.cpu_usage.toFixed(1)}%`],
       ['Memory Usage', `${analysisReport.performance_metrics.memory_usage.toFixed(1)} MB`],
-      ['Processing Speed', `${analysisReport.performance_metrics.processing_speed.toFixed(1)} fps`]
+      ['Processing Speed', `${analysisReport.performance_metrics.processing_speed.toFixed(1)} fps`],
+      ['Real-time Factor', `${(analysisReport.performance_metrics.processing_speed / analysisReport.fps).toFixed(2)} x`]
     ];
     // @ts-ignore
     doc.autoTable({

@@ -71,7 +71,8 @@ You can modify or expand this dataset according to your specific requirements.
 
     ```bash
     cd backend
-    pip install uvicorn
+    pip install fastapi uvicorn
+    pip install fastapi-cors
     uvicorn vid:app --reload
     ```
 
@@ -105,6 +106,11 @@ You can modify or expand this dataset according to your specific requirements.
 </figure>
 
 <figure style="text-align: center;">
-   <figcaption><strong>Model Details</strong></figcaption>
+   <figcaption><strong>Model Details 1</strong></figcaption>
   <img src="img/5.png" alt="workflow" width="100%">
+</figure>
+
+<figure style="text-align: center;">
+   <figcaption><strong>Model Details 2</strong></figcaption>
+  <img src="img/6.png" alt="workflow" width="100%">
 </figure>
