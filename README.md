@@ -9,6 +9,7 @@ This repository contains the code and resources for an Action Detection project 
 - [Dataset](#dataset)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Demo](#demo)
 
 ## Project Overview
 
@@ -80,3 +81,15 @@ You can modify or expand this dataset according to your specific requirements.
     cd frontend
     npm run dev
     ```
+
+# Demo:
+
+<img src="img/1.png" alt="workflow" width="100%">
+
+<img src="img/2.png" alt="workflow" width="100%">
+
+<img src="img/3.png" alt="workflow" width="100%">
+
+<img src="img/4.png" alt="workflow" width="100%">
+
+<img src="img/5.png" alt="workflow" width="100%">
