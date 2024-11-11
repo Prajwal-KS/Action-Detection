@@ -85,11 +85,16 @@ You can modify or expand this dataset according to your specific requirements.
 # Demo:
 
 <img src="img/1.png" alt="workflow" width="100%">
+**DUser Interface(Dark mode)**
 
 <img src="img/2.png" alt="workflow" width="100%">
+**User Interface(Light mode)**
 
 <img src="img/3.png" alt="workflow" width="100%">
+**Processed Video**
 
 <img src="img/4.png" alt="workflow" width="100%">
+**Analysis Report**
 
 <img src="img/5.png" alt="workflow" width="100%">
+**Model Details**
