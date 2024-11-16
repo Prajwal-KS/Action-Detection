@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ProcessPage from './pages/ProcessPage';
 import ModelDetails from './pages/ModelDetails';
-import Blog from './pages/Blog';
+//@ts-ignore
+import FAQ from './pages/FAQ';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProcessProvider } from './context/ProcessContext';
 
@@ -18,7 +19,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<ProcessPage />} />
                 <Route path="/model-details" element={<ModelDetails />} />
-                <Route path="/blog" element={<Blog />} />
+                <Route path="/faq" element={<FAQ />} />
               </Routes>
             </div>
           </div>

@@ -356,7 +356,7 @@ const ProcessPage = () => {
           {analysisReport && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-xl font-semibold">Analysis Report</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Analysis Report</h3>
             <button
               onClick={downloadReport}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -368,53 +368,53 @@ const ProcessPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-              <h4 className="font-medium mb-4">Basic Information</h4>
+              <h4 className="font-medium mb-4 text-gray-900 dark:text-white">Basic Information</h4>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Detection Type:</span>
-                  <span className="font-medium">{analysisReport.detection_type}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.detection_type}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Total Frames:</span>
-                  <span className="font-medium">{analysisReport.total_frames}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.total_frames}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Video Duration:</span>
-                  <span className="font-medium">{analysisReport.video_duration}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.video_duration}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Resolution:</span>
-                  <span className="font-medium">{analysisReport.resolution}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.resolution}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">FPS:</span>
-                  <span className="font-medium">{analysisReport.fps}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.fps}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Processing Time:</span>
-                  <span className="font-medium">{analysisReport.processing_time}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.processing_time}</span>
                 </div>
               </div>
             </div>
             
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-              <h4 className="font-medium mb-4">Detection Metrics</h4>
+              <h4 className="font-medium mb-4 text-gray-900 dark:text-white">Detection Metrics</h4>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Total Detections:</span>
-                  <span className="font-medium">{analysisReport.total_detections}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.total_detections}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Avg. Detections/Frame:</span>
-                  <span className="font-medium">{analysisReport.average_detections_per_frame}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.average_detections_per_frame}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Detection Confidence:</span>
-                  <span className="font-medium">{analysisReport.detection_confidence.toFixed(2)}%</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.detection_confidence.toFixed(2)}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Processing Rate:</span>
-                  <span className="font-medium">
+                  <span className="font-medium text-gray-900 dark:text-white">
                     {(analysisReport.total_frames / parseFloat(analysisReport.processing_time)).toFixed(2)} frames/sec
                   </span>
                 </div>
@@ -422,23 +422,23 @@ const ProcessPage = () => {
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-              <h4 className="font-medium mb-4">Performance Metrics</h4>
+              <h4 className="font-medium mb-4 text-gray-900 dark:text-white">Performance Metrics</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">CPU Usage:</span>
-                  <span className="font-medium">{analysisReport.performance_metrics.cpu_usage.toFixed(1)}%</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.performance_metrics.cpu_usage.toFixed(1)}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Memory Usage:</span>
-                  <span className="font-medium">{analysisReport.performance_metrics.memory_usage.toFixed(1)} MB</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.performance_metrics.memory_usage.toFixed(1)} MB</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Processing Speed:</span>
-                  <span className="font-medium">{analysisReport.performance_metrics.processing_speed.toFixed(1)} fps</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.performance_metrics.processing_speed.toFixed(1)} fps</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Real-time Factor:</span>
-                  <span className="font-medium">
+                  <span className="font-medium text-gray-900 dark:text-white">
                     {(analysisReport.performance_metrics.processing_speed / analysisReport.fps).toFixed(2)}x
                   </span>
                 </div>
@@ -446,7 +446,7 @@ const ProcessPage = () => {
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-              <h4 className="font-medium mb-4">Detected Classes</h4>
+              <h4 className="font-medium mb-4 text-gray-900 dark:text-white">Detected Classes</h4>
               <div className="space-y-2">
                 {Object.entries(analysisReport.detected_classes).map(([className, count]) => 
                 {
@@ -463,7 +463,7 @@ const ProcessPage = () => {
                   return (
                     <div key={className} className="flex justify-between">
                       <span className="text-gray-600 dark:text-gray-400">{displayName}</span>
-                      <span className="font-medium">{count}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{count}</span>
                     </div>
                   );
                 })}

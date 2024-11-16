@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Brain, FileVideo, BookOpen, Moon, Sun, Rocket } from 'lucide-react';
+import { Brain, FileVideo, HelpCircle, Moon, Sun, Rocket } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
@@ -56,16 +56,16 @@ const Navbar = () => {
               </Link>
               
               <Link
-                to="/blog"
+                to="/faq"
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive('/blog')
+                  isActive('/faq')
                     ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                     : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/50'
                 }`}
               >
                 <div className="flex items-center space-x-1">
-                  <BookOpen className="h-4 w-4" />
-                  <span>Blog</span>
+                  <HelpCircle className="h-4 w-4" />
+                  <span>FAQ</span>
                 </div>
               </Link>
             </div>
