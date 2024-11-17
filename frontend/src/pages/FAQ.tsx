@@ -17,7 +17,7 @@ const FAQ = () => {
     },
     {
       question: "What types of actions can the system detect?",
-      answer: "The system is primarily trained to detect common human actions such as sitting, standing, walking, and running. For proximity relations, it can analyze spatial relationships between people and objects in the scene. The detection capabilities can be extended through additional training on specific actions."
+      answer: "The system is primarily trained to detect common human actions such as sitting, standing, walking, etc. For proximity relations, it can analyze spatial relationships between people and objects in the scene. The detection capabilities can be extended through additional training on specific actions."
     },
     {
       question: "What video formats are supported?",
@@ -25,7 +25,7 @@ const FAQ = () => {
     },
     {
       question: "How accurate is the detection system?",
-      answer: "The system achieves high accuracy rates, typically above 90% for well-defined actions in clear conditions. Factors affecting accuracy include video quality, lighting conditions, occlusions, and complexity of actions. The confidence scores are provided in the analysis report for transparency."
+      answer: "The system achieves high accuracy rates, typically above 80% for well-defined actions in clear conditions. Factors affecting accuracy include video quality, lighting conditions, occlusions, and complexity of actions. The confidence scores are provided in the analysis report for transparency."
     },
     {
       question: "Can I process videos in batch?",
@@ -33,7 +33,7 @@ const FAQ = () => {
     },
     {
       question: "How is the processed data handled?",
-      answer: "All uploaded videos are processed securely and temporarily stored only for the duration of processing. Once you download the processed video and analysis report, the data is automatically removed from our servers. We prioritize user privacy and data security throughout the process."
+      answer: "All uploaded videos are temporarily stored only for the duration of processing. Once you download the processed video and analysis report, the data is automatically removed from our servers. We prioritize user privacy through this temporary data storage approach."
     }
   ];
 
