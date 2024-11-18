@@ -7,6 +7,7 @@ interface AnalysisReport {
   total_detections: number;
   average_detections_per_frame: number;
   video_duration: string;
+  video_duration_seconds: number;
   resolution: string;
   fps: number;
   processing_time: string;

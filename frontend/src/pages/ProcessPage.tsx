@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import axios from 'axios';
 import { Play, Download, AlertCircle, FileDown } from 'lucide-react';
 import FileUpload from '../components/FileUpload';
@@ -35,6 +35,17 @@ const ProcessPage = () => {
   } = useProcess();
   
   const videoRef = useRef<HTMLVideoElement>(null);
+  const scrollTargetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (processedVideo && scrollTargetRef.current) {
+      const topOffset = scrollTargetRef.current.offsetTop - 100; // Add 100px padding from top
+      window.scrollTo({
+        top: topOffset,
+        behavior: 'smooth'
+      });
+    }
+  }, [processedVideo]);
 
   const handleFileSelect = (selectedFile: File) => {
     setFile(selectedFile);
@@ -197,7 +208,7 @@ const ProcessPage = () => {
       ([className, count]) => [
         //@ts-ignore
         classLabels[className] || className, // Use label if available, else original className
-        count.toString()
+        (count/(analysisReport.video_duration_seconds*30)).toFixed(2).toString()
       ]
     );
     // @ts-ignore
@@ -328,7 +339,7 @@ const ProcessPage = () => {
 
       {/* Processed Video Section */}
       {processedVideo && (
-        <div className="card space-y-6">
+        <div ref={scrollTargetRef} className="card space-y-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Processed Video
           </h2>
@@ -460,10 +471,26 @@ const ProcessPage = () => {
                   //@ts-ignore
                   const displayName = classLabels[className] || className;
 
+                  const percentage = ((count as number) / analysisReport.total_detections * 100).toFixed(1);
+                  const avgPerSecond = ((count as number) / analysisReport.video_duration_seconds);
+
                   return (
-                    <div key={className} className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">{displayName}</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{count}</span>
+                    <div key={className} className="space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 dark:text-gray-400">{displayName}</span>
+                        <div className="text-right">
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {(avgPerSecond/30).toFixed(2)} ({percentage}%)
+                          </span>
+                        </div>
+                      </div>
+                      {/* Add a progress bar to visualize the proportion */}
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
                     </div>
                   );
                 })}

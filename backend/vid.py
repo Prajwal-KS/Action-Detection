@@ -84,6 +84,8 @@ async def process_video_frames(cap, model, out, total_frames):
     detections_count = 0
     last_results = None
     start_time = time.time()
+
+    total_class_counts = Counter()
     
     while True:
         ret, frame = cap.read()
@@ -96,6 +98,9 @@ async def process_video_frames(cap, model, out, total_frames):
         
         if len(results[0].boxes) > 0:
             detections_count += len(results[0].boxes)
+
+            frame_classes = results[0].boxes.cls.tolist() # Add current frame's class counts to total counts
+            total_class_counts.update(frame_classes)
         
         processed_frames += 1
         last_results = results
@@ -108,7 +113,7 @@ async def process_video_frames(cap, model, out, total_frames):
         # Send progress update through WebSocket
         
     
-    return processed_frames, detections_count, last_results, time.time() - start_time
+    return processed_frames, detections_count, last_results, time.time() - start_time, total_class_counts
 
 async def send_progress(websocket: WebSocket, progress: float, stage: str):
     try:
@@ -159,7 +164,7 @@ async def upload_video(
             raise HTTPException(status_code=500, detail="Failed to create video writer")
 
         # Process frames
-        processed_frames, detections_count, results, total_processing_time = await process_video_frames(
+        processed_frames, detections_count, results, total_processing_time, total_class_counts = await process_video_frames(
             cap, models[detection_type], out, total_frames
         )
         
@@ -176,12 +181,13 @@ async def upload_video(
             "total_detections": detections_count,
             "average_detections_per_frame": round(detections_count / processed_frames, 2),
             "video_duration": f"{round(total_frames/fps, 2)} seconds",
+            "video_duration_seconds": round(total_frames/fps, 2),
             "resolution": f"{frame_width}x{frame_height}",
             "fps": fps,
             "processing_time": f"{round(total_processing_time, 2)} seconds",
             "elapsed_time": format_elapsed_time(total_processing_time),
             "detection_confidence": float(results[0].boxes.conf.mean()) * 100 if len(results[0].boxes) > 0 else 0,
-            "detected_classes": dict(Counter(results[0].boxes.cls.tolist())) if len(results[0].boxes) > 0 else {},
+            "detected_classes": dict(total_class_counts),
             "performance_metrics": {
                 "cpu_usage": psutil.cpu_percent(),
                 "memory_usage": round(psutil.Process().memory_info().rss / 1024 / 1024, 2),
