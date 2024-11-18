@@ -27,3 +27,6 @@ dist-ssr
 /frontend/node_modules
 /backend/outputs
 /backend/uploads
+
+testVideo.mp4
+testVideo2.mp4

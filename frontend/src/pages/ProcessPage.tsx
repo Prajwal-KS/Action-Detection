@@ -204,11 +204,11 @@ const ProcessPage = () => {
       // Add more mappings as needed
     };
 
-    const detectedClasses = Object.entries(analysisReport.detected_classes).map(
+    const detectedClasses = Object.entries(analysisReport.detected_activities).map(
       ([className, count]) => [
         //@ts-ignore
         classLabels[className] || className, // Use label if available, else original className
-        (count/(analysisReport.video_duration_seconds*30)).toFixed(2).toString()
+        (parseInt(count, 10)/(analysisReport.video_duration_seconds*30)).toFixed(2).toString()
       ]
     );
     // @ts-ignore
@@ -421,7 +421,7 @@ const ProcessPage = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Detection Confidence:</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport.detection_confidence.toFixed(2)}%</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{analysisReport?.detection_confidence?.toFixed(2) ?? 'N/A'}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 dark:text-gray-400">Processing Rate:</span>
@@ -459,7 +459,7 @@ const ProcessPage = () => {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
               <h4 className="font-medium mb-4 text-gray-900 dark:text-white">Detected Classes</h4>
               <div className="space-y-2">
-                {Object.entries(analysisReport.detected_classes).map(([className, count]) => 
+                {Object.entries(analysisReport.detected_activities).map(([className, count]) => 
                 {
                   // Define the mapping from class names to labels
                   const classLabels = {
@@ -471,8 +471,8 @@ const ProcessPage = () => {
                   //@ts-ignore
                   const displayName = classLabels[className] || className;
 
-                  const percentage = ((count as number) / analysisReport.total_detections * 100).toFixed(1);
-                  const avgPerSecond = ((count as number) / analysisReport.video_duration_seconds);
+                  const percentage = (parseInt(count, 10) / analysisReport.total_detections * 100).toFixed(1);
+                  const avgPerSecond = (parseInt(count, 10) / analysisReport.video_duration_seconds);
 
                   return (
                     <div key={className} className="space-y-1">
