@@ -5,15 +5,16 @@ interface AnalysisReport {
   processed_frames: number;
   detection_type: string;
   total_detections: number;
-  average_detections_per_frame: number;
-  video_duration: string;
+  average_detections_per_frame:number;
+  unusual_actions_detected: number;
+  detected_activities: string;
+  video_duration: number;
   video_duration_seconds: number;
   resolution: string;
   fps: number;
   processing_time: string;
-  detection_confidence: number;
-  detected_classes: { [key: string]: number };
-  elapsedTime: string;
+  elapsed_time: number;
+  detection_confidence:number;
   performance_metrics: {
     cpu_usage: number;
     memory_usage: number;
