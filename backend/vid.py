@@ -14,8 +14,31 @@ import numpy as np
 from sklearn.svm import OneClassSVM
 from sklearn.preprocessing import StandardScaler
 
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from pydantic import BaseModel
+
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Email configuration
+conf = ConnectionConfig(
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME'),
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD'),
+    MAIL_FROM = os.getenv('MAIL_FROM'),
+    MAIL_PORT = int(os.getenv('MAIL_PORT', 587)),
+    MAIL_SERVER = os.getenv('MAIL_SERVER'),
+    MAIL_STARTTLS = os.getenv('MAIL_STARTTLS', 'True').lower() == 'true',
+    MAIL_SSL_TLS = os.getenv('MAIL_SSL_TLS', 'False').lower() == 'true',
+    USE_CREDENTIALS = os.getenv('USE_CREDENTIALS', 'True').lower() == 'true'
+)
 
 app = FastAPI()
+# Initialize FastMail
+fastmail = FastMail(conf)
+
 
 # Configure CORS
 app.add_middleware(
@@ -93,7 +116,7 @@ def detect_unusual_action(bounding_boxes: List[dict], scaler, svm) -> Tuple[str,
             if unusualness_score > max_unusualness:
                 max_unusualness = unusualness_score
                 confidence_level = "High" if unusualness_score > 0.8 else "Medium" if unusualness_score > 0.5 else "Low"
-                unusual_message = f"Unusual action - ({confidence_level})"
+                unusual_message = f"Unusual Activity Detected - {box_info['label']} ({confidence_level})"
     
     return unusual_message, max_unusualness
 
@@ -194,33 +217,48 @@ def analyze_proximity(bounding_boxes: List[dict]) -> str:
 
 def draw_messages(frame: np.ndarray, messages: List[str]) -> np.ndarray:
     """Draw messages on the frame"""
+    if not messages:  # Skip if no messages
+        return frame
+        
     height, width, _ = frame.shape
-    y_offset = 30
+    y_offset = 60  # Start from bottom with some padding
     
     for message in messages:
         if message:
-            text_size = cv2.getTextSize(message, cv2.FONT_HERSHEY_SIMPLEX, 2.0, 5)[0]
-            text_x = (width - text_size[0]) // 2
-            text_y = height - y_offset
+            # Use larger font scale for better visibility
+            font_scale = 1.5
+            thickness = 3
+            font = cv2.FONT_HERSHEY_SIMPLEX
             
-            # Set color for "Unusual activity detected" message (red) or normal (green)
-            color = (0, 0, 255) if "Unusual Activity Detected" in message else (0, 255, 0)
-            cv2.putText(frame, message,
-                       (text_x, text_y),
-                       cv2.FONT_HERSHEY_SIMPLEX,
-                       2.0, color, 5)
+            # Get text size
+            (text_width, text_height), baseline = cv2.getTextSize(
+                message, font, font_scale, thickness)
             
-            y_offset += 60
+            # Calculate position (centered horizontally)
+            x = (width - text_width) // 2
+            y = height - y_offset
+            
+            # Draw text with color based on message type
+            # Red for unusual activities, green for proximity messages
+            color = (0, 0, 255) if "Unusual" in message else (0, 255, 0)
+            
+            # Draw text directly without background
+            cv2.putText(frame, message, (x, y), font, font_scale, color, thickness)
+            
+            y_offset += text_height + 40  # Increase offset for next message
     
     return frame
 
-async def process_video_frames(cap, detection_type: str, out, total_frames: int, websocket: Optional[WebSocket] = None):
-    """Process video frames with combined detection capabilities"""
+
+async def process_video_frames(cap, detection_type: str, out, total_frames: int, video_name: str, user_email: str, websocket: Optional[WebSocket] = None):
     processed_frames = 0
     detections_count = 0
     unusual_actions_count = 0
     start_time = time.time()
     detected_activities = Counter()
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    email_sent = False
+    first_unusual_activity = None
     
     while True:
         ret, frame = cap.read()
@@ -230,10 +268,9 @@ async def process_video_frames(cap, detection_type: str, out, total_frames: int,
         # Regular object detection
         results = models[detection_type](frame)
         
-        # Process detected objects
         if len(results[0].boxes) > 0:
             bounding_boxes = []
-            unusual_activity_detected = False  # Flag to check if any unusual activity is detected
+            unusual_activity_detected = False
             
             for box, score, cls in zip(
                 results[0].boxes.xyxy.cpu().numpy(),
@@ -242,6 +279,55 @@ async def process_video_frames(cap, detection_type: str, out, total_frames: int,
             ):
                 label = models[detection_type].names[int(cls)]
                 detected_activities[label] += 1
+
+                if label in UNUSUAL_ACTIVITIES:
+                    unusual_activity_detected = True
+                
+                if label in UNUSUAL_ACTIVITIES and not email_sent:  # Check if email hasn't been sent yet
+                    unusual_actions_count += 1
+                    
+                    # Only store the first unusual activity details
+                    if first_unusual_activity is None:
+                        # Calculate timestamp
+                        current_time = processed_frames / fps
+                        timestamp = f"{int(current_time // 60):02d}:{int(current_time % 60):02d}"
+                        
+                        # Get frame location info
+                        x1, y1, x2, y2 = map(int, box)
+                        frame_height, frame_width = frame.shape[:2]
+                        location = "center" if (frame_width//3 < x1 < 2*frame_width//3) else "left" if x1 < frame_width//3 else "right"
+                        
+                        # Store first unusual activity details
+                        first_unusual_activity = {
+                            "label": label,
+                            "score": score,
+                            "timestamp": timestamp,
+                            "frame_number": processed_frames,
+                            "location": location,
+                            "normal_activities": [act for act in detected_activities.keys() if act in NORMAL_ACTIVITIES]
+                        }
+                        
+                        # Send email only for the first detection
+                        await send_unusual_activity_email(
+                            email=user_email,
+                            activity_type=label,
+                            confidence=score * 100,
+                            frame_number=processed_frames,
+                            video_name=video_name,
+                            timestamp=timestamp,
+                            total_duration=total_frames/fps,
+                            detection_count=1,  # Since this is first detection
+                            fps=fps,
+                            additional_info={
+                                "location": location,
+                                "duration": f"{score:.1f} seconds",
+                                "normal_activities": first_unusual_activity["normal_activities"]
+                            }
+                        )
+                        email_sent = True  # Set flag to prevent further emails
+                elif label in UNUSUAL_ACTIVITIES:
+                    unusual_actions_count += 1
+                
                 box_info = {
                     "label": label,
                     "box": box,
@@ -249,24 +335,16 @@ async def process_video_frames(cap, detection_type: str, out, total_frames: int,
                 }
                 bounding_boxes.append(box_info)
                 
-                # Draw detection visuals
                 frame = draw_detection_visuals(frame, box_info, score)
-                
-                # Check if the label is an unusual activity
-                if label in UNUSUAL_ACTIVITIES:
-                    unusual_activity_detected = True
             
-            # Analyze and draw messages
+            # Rest of the processing remains the same...
             unusual_message, unusualness_score = detect_unusual_action(bounding_boxes, scaler, svm_model)
             proximity_message = analyze_proximity(bounding_boxes)
-            
             messages = [msg for msg in [unusual_message, proximity_message] if msg]
-            
-            # Add "Unusual Activity Detected" message if any unusual activity is detected
+
             if unusual_activity_detected:
                 messages.append("Unusual Activity Detected")
-            
-            # Draw messages on the frame
+
             frame = draw_messages(frame, messages)
             
             detections_count += len(bounding_boxes)
@@ -274,7 +352,6 @@ async def process_video_frames(cap, detection_type: str, out, total_frames: int,
         out.write(frame)
         processed_frames += 1
         
-        # Send progress updates
         if websocket:
             try:
                 progress = round((processed_frames / total_frames) * 100, 1)
@@ -298,6 +375,78 @@ async def process_video_frames(cap, detection_type: str, out, total_frames: int,
         "results": results,
     }
 
+class EmailSchema(BaseModel):
+    email: str
+    activity_type: str
+    confidence: float
+    timestamp: str
+    frame_number: int
+    total_duration: float
+    video_name: str
+    detection_count: int
+    fps: int
+    additional_info: dict = {}
+
+# Add a new function to format the email content
+async def send_unusual_activity_email(
+    email: str,
+    activity_type: str,
+    confidence: float,
+    frame_number: int,
+    video_name: str,
+    timestamp: str,
+    total_duration: float,
+    detection_count: int,
+    fps: int,
+    additional_info: dict = {}
+):
+    try:
+        # Format duration in minutes and seconds
+        minutes = int(total_duration // 60)
+        seconds = int(total_duration % 60)
+        duration_formatted = f"{minutes}m {seconds}s"
+
+        # Calculate timestamp percentage through video
+        timestamp_percentage = (frame_number / (total_duration * fps)) * 100
+
+        message = MessageSchema(
+            subject=f"⚠️ Unusual Activity Alert: {activity_type}",
+            recipients=[email],
+            body=f"""
+            🚨 UNUSUAL ACTIVITY DETECTED IN VIDEO ANALYSIS 🚨
+            
+            Video Details:
+            --------------
+            File Name: {video_name}
+            Total Duration: {duration_formatted}
+            
+            Activity Information:
+            -------------------
+            Type: {activity_type}
+            Confidence Level: {confidence:.2f}%
+            Timestamp: {timestamp}
+            Location in Video: {timestamp_percentage:.1f}% through video
+            Frame Number: {frame_number}
+            
+            Additional Information:
+            ---------------------
+            • Location in Frame: {additional_info.get('location', 'N/A')}
+            • Associated Normal Activities: {', '.join(additional_info.get('normal_activities', []))}
+            
+            Please review this activity in your dashboard for more details and visual confirmation.
+            
+            This is an automated message. Please do not reply.
+            """,
+            subtype="plain"
+        )
+        
+        await fastmail.send_message(message)
+        return True
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return False
+
+
 # Rest of the FastAPI endpoints remain the same
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -310,6 +459,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.post("/upload_video/")
 async def upload_video(
+    user_email: str,
     file: UploadFile = File(...),
     detection_type: str = "action"
 ):
@@ -348,9 +498,15 @@ async def upload_video(
         if not out.isOpened():
             raise HTTPException(status_code=500, detail="Failed to create video writer")
 
-        # Process frames
+        # Process frames with email notification
         processing_results = await process_video_frames(
-            cap, detection_type, out, total_frames
+            cap=cap,
+            detection_type=detection_type,
+            out=out,
+            total_frames=total_frames,
+            video_name=file.filename,
+            user_email=user_email,
+            websocket=None
         )
         
         cap.release()

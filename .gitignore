@@ -27,3 +27,5 @@ dist-ssr
 /frontend/node_modules
 /backend/outputs
 /backend/uploads
+/frontend/.env
+/backend/.env
