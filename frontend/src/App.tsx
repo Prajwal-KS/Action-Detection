@@ -18,11 +18,11 @@ function App() {
         <ProcessProvider>
         
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+            {/* <Route path="/" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} /> */}
             
             <Route 
-              path="/process-page" 
+              path="/" 
               element={
 
                   <div className="min-h-screen transition-colors duration-200 dark:bg-gray-900">
