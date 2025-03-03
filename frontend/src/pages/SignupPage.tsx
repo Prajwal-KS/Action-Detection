@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext';
 import { Mail, LockKeyhole, UserPlus, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -8,14 +8,14 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { signUp } = useAuth();
+  // const { signUp } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setError('');
-      await signUp(email, password);
+      // await signUp(email, password);
     } catch (err: any) {
       setError(err.message || 'Failed to create an account');
     }

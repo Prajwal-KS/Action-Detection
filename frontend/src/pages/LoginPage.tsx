@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext';
 import { Mail, LockKeyhole, UserCheck, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -8,18 +8,18 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { signIn } = useAuth();
+  // const { signIn } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setError('');
-      await signIn(email, password);
+      // await signIn(email, password);
     } catch (err: any) {
       setError(err.message || 'Login failed');
     }
-  };
+  }; 
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 relative">

@@ -1,13 +1,12 @@
-import React from 'react';
+
 import { Link, useLocation } from 'react-router-dom';
 import { Brain, FileVideo, HelpCircle, Moon, Sun, Rocket, LogOut } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
+
 
 const Navbar = () => {
   const location = useLocation();
   const { darkMode, toggleDarkMode } = useTheme();
-  const { logout } = useAuth();
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -89,7 +88,6 @@ const Navbar = () => {
 
             {/* Logout Button */}
             <button
-              onClick={logout}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 
                 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 
                 hover:bg-gray-50 dark:hover:bg-gray-700/50`}

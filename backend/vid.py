@@ -10,7 +10,7 @@ from typing import Dict, Optional, List, Tuple
 import psutil
 import time
 from collections import Counter
-import numpy as np
+import numpy as np 
 from sklearn.svm import OneClassSVM
 from sklearn.preprocessing import StandardScaler
 
@@ -250,7 +250,7 @@ def draw_messages(frame: np.ndarray, messages: List[str]) -> np.ndarray:
     return frame
 
 
-async def process_video_frames(cap, detection_type: str, out, total_frames: int, video_name: str, user_email: str, websocket: Optional[WebSocket] = None):
+async def process_video_frames(cap, detection_type: str, out, total_frames: int, video_name: str, websocket: Optional[WebSocket] = None):
     processed_frames = 0
     detections_count = 0
     unusual_actions_count = 0
@@ -309,7 +309,7 @@ async def process_video_frames(cap, detection_type: str, out, total_frames: int,
                         
                         # Send email only for the first detection
                         await send_unusual_activity_email(
-                            email=user_email,
+                            email="xyz@email.com",
                             activity_type=label,
                             confidence=score * 100,
                             frame_number=processed_frames,
@@ -376,7 +376,6 @@ async def process_video_frames(cap, detection_type: str, out, total_frames: int,
     }
 
 class EmailSchema(BaseModel):
-    email: str
     activity_type: str
     confidence: float
     timestamp: str
@@ -389,7 +388,6 @@ class EmailSchema(BaseModel):
 
 # Add a new function to format the email content
 async def send_unusual_activity_email(
-    email: str,
     activity_type: str,
     confidence: float,
     frame_number: int,
@@ -411,7 +409,6 @@ async def send_unusual_activity_email(
 
         message = MessageSchema(
             subject=f"⚠️ Unusual Activity Alert: {activity_type}",
-            recipients=[email],
             body=f"""
             🚨 UNUSUAL ACTIVITY DETECTED IN VIDEO ANALYSIS 🚨
             
@@ -431,7 +428,6 @@ async def send_unusual_activity_email(
             Additional Information:
             ---------------------
             • Location in Frame: {additional_info.get('location', 'N/A')}
-            • Associated Normal Activities: {', '.join(additional_info.get('normal_activities', []))}
             
             Please review this activity in your dashboard for more details and visual confirmation.
             
@@ -459,7 +455,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.post("/upload_video/")
 async def upload_video(
-    user_email: str,
+    #user_email: str,
     file: UploadFile = File(...),
     detection_type: str = "action"
 ):
@@ -505,7 +501,6 @@ async def upload_video(
             out=out,
             total_frames=total_frames,
             video_name=file.filename,
-            user_email=user_email,
             websocket=None
         )
         

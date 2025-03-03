@@ -5,7 +5,7 @@ import FileUpload from '../components/FileUpload';
 import { useProcess } from '../context/ProcessContext';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { useAuth } from '../context/AuthContext';
+// import { useAuth } from '../context/AuthContext';
 
 const API_URL = 'http://localhost:8000';
 
@@ -35,16 +35,11 @@ const ProcessPage = () => {
     setAnalysisReport,
   } = useProcess();
   
-  const { user, isAuthenticated } = useAuth();
+  // const { user, isAuthenticated } = useAuth();
   const videoRef = useRef<HTMLVideoElement>(null);
   const scrollTargetRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Redirect or show error if not authenticated
-    if (!isAuthenticated) {
-      setError('Please login to upload videos');
-    }
-  }, [isAuthenticated]);
+ 
 
   useEffect(() => {
     if (processedVideo && scrollTargetRef.current) {
@@ -69,10 +64,10 @@ const ProcessPage = () => {
       return;
     }
 
-    if (!isAuthenticated || !user?.email) {
-      setError('Please login to upload videos');
-      return;
-    }
+    // if (!user?.email) {
+    //   setError('Please login to upload videos');
+    //   return;
+    // }
 
     setIsProcessing(true);
     setError(null);
@@ -80,7 +75,7 @@ const ProcessPage = () => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('detection_type', detectionType);
-    formData.append('user_email', user.email);
+    formData.append('user_email', "xyz@email.com");
   
     try {
       // Check server health
@@ -95,7 +90,7 @@ const ProcessPage = () => {
         },
         params: {
           detection_type: detectionType,
-          user_email: user.email,
+          // user_email: user.email,
         },
         onUploadProgress: (progressEvent) => {
           const progress = progressEvent.total
@@ -284,12 +279,12 @@ const ProcessPage = () => {
           </p>
         </div>
 
-        {!isAuthenticated && (
+        {/* {!isAuthenticated && (
           <div className="flex items-center space-x-2 text-amber-600 dark:text-amber-400 p-4 bg-amber-50 dark:bg-amber-900/30 rounded-lg">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             <span>Please login to upload and process videos</span>
           </div>
-        )}
+        )} */}
 
         <div className="space-y-6">
           {/* File Upload Section */}
@@ -332,7 +327,7 @@ const ProcessPage = () => {
           {/* Process Button */}
           <button
             onClick={handleUpload}
-            disabled={!file || isProcessing || !isAuthenticated}
+            disabled={!file || isProcessing }
             className="btn-primary w-full py-3"
           >
             <Play className="w-4 h-4" />
