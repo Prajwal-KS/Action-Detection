@@ -15,7 +15,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
             <Link 
-              to="/process-page" 
+              to="/" 
               className="flex items-center space-x-2 group"
             >
               <FileVideo className="h-7 w-7 text-primary-600 dark:text-primary-400 
@@ -28,9 +28,9 @@ const Navbar = () => {
             
             <div className="flex space-x-1">
               <Link
-                to="/process-page"
+                to="/"
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive('/process-page') 
+                  isActive('/') 
                     ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                     : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700/50'
                 }`}
@@ -85,7 +85,7 @@ const Navbar = () => {
                 <Moon className="h-5 w-5 text-gray-600 group-hover:rotate-180 transition-transform duration-300" />
               )}
             </button>
-
+x
             {/* Logout Button */}
             <button
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 
