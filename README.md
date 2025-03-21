@@ -71,8 +71,7 @@ You can modify or expand this dataset according to your specific requirements.
 
     ```bash
     cd backend
-    pip install fastapi uvicorn
-    pip install fastapi-cors
+    pip install python-multipart fastapi uvicorn fastapi-cors
     uvicorn vid:app --reload
     ```
 
